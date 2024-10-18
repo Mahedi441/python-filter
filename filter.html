@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- <link rel="stylesheet" href="static/filter.css"> -->
+        {% set filename_css = url_for('static', filename='filter.css') %}
+        <link rel="stylesheet" href="{{filename_css}}">
+      
+        <title>Filter Project</title>
+    </head>
+    <body>
+        <div class="root">
+            <nav class="nav">
+                <li class="li0">
+                    
+                 <i id="li0_i" class="fa-solid fa-sliders"></i>
+                 <li class="li1">FASHIONKART</li>
+                </li>
+        <!-- <button onclick="btn" style="background-color: blue; width: 50px; height: 50px;"></button> -->
+        
+                <!-- {% if mode %}
+                <div style="width: 50px; height: 50px; background: #000;"></div>
+                {% endif %} -->
+                <a href="/" class="li2 home_btn btn btn-success float-end mt-2 me-4 ">Home</a>
+                {% if u %}
+                <a href="/logout" class="li2 logout_btn btn btn-success float-end mt-2 me-4 "><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+              
+                {% endif %}
+                <a href="/cart" class="li2 cart_btn btn btn-success float-end mt-2 me-4 "><i class="fa-solid fa-cart-plus"></i> cart</a>
+                    
+                <!-- <li class="li3"> <div class="mode_icon">
+                    <span class="light_mode">
+                        <i class="fa-regular fa-sun light_i"></i>
+                    </span> 
+                    <span class="dark_mode">
+                        <i class="fa-regular fa-moon dark_i"></i>
+                    </span> 
+                </div></li> -->
+            </li>
+             </nav>
+
+           {% block add_product %}{% endblock %}
+           {% block eee %}{% endblock %}
+    
+    <div class="main_root">
+    
+    {% block body %}{% endblock %}
+    
+</div>
+{% set filename_js = url_for('static', filename='filter.js') %}
+<script  src="{{filename_js}}"></script>
+<!-- <script src="new2.js"></script> -->
+<script src="https://kit.fontawesome.com/d94b871288.js" crossorigin="anonymous"></script>
+</body>
+</html>

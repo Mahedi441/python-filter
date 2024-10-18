@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+
+        }
+
+        /* body {
+            overflow: scroll hidden;
+            width: 100vw;
+            height: 100vh;
+            border: 2px solid red;
+        } */
+
+        .model {
+            display: none;
+            /* display: flex; */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 2rem;
+            border-radius: 5px 5px 5px 5px;
+            /* width: 40em; */
+            height: 38em;
+            background-color: #caced1cb
+                /* background: linear-gradient(135deg, #375038, #2d3828, #375038); */
+            ;
+            color: rgb(255, 255, 255);
+        }
+        .logout_btn{
+            text-decoration: none;
+            background: #949090;
+
+        }
+        .logout_btn:hover{
+            text-decoration: none;
+            background: #5f5e5e;
+
+        }
+
+        .model_input {
+            color: #696767;
+            /* font-size: .8rem; */
+            padding: 4px;
+            outline: none;
+            border: none;
+            border-radius: 5px 5px 5px 5px;
+            margin-bottom: .5rem;
+            margin-top: .5rem;
+            width: 18rem;
+            /* height: 100px; */
+            height: 2rem;
+        }
+
+        label {
+            min-width: 8rem;
+            position: relative;
+            left: -80px;
+            /* border: 2px solid; */
+            text-align: left;
+        }
+
+        .submit_btn {
+            border: none;
+            border-radius: 5px 5px 5px 5px;
+            background: #fff;
+            width: 4rem;
+            margin-top: 2px;
+        }
+
+        /* Chrome, Safari, Edge, and Opera */
+        .inp_number::-webkit-outer-spin-button,
+        .inp_number::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="model " id="model">
+        <table>
+            <form id="uploadForm">
+                <h4 class="model_heading"></h4>
+                <p id="updateId"></p>
+                <input type="file" id="inp_file" name="file">
+
+                <label for="slug">Slug</label>
+                <input type="text" name="slug" class="model_input">
+
+                <label for="price">Price</label>
+                <input type="number" name="price" class="model_input inp_number">
+
+                <label for="name">Name</label>
+                <input id="inp_data" type="text" name="name" class="model_input">
+
+
+                <label for="id" style="display: none;">Id</label>
+                <input type="text" name="id" class="model_input" style="display: none;">
+
+                <label for="description">Description</label>
+                <input type="text" name="description" class="model_input">
+
+                <label for="color">Color</label>
+                <input type="text" name="color" class="model_input">
+
+                <label for="category">Category</label>
+                <input type="text" name="category" class="model_input" id="ca">
+
+
+
+                <input type="submit" class="submit_btn model_submit_btn" id="sub_inp">
+            </form>
+        </table>
+    </div>
+
+    {% if sessionUser %}
+    <h1 class="d-inline m-2 text-decoration-underline">Dashboard : {{sessionUser}}</h1>
+    {% else %}
+    <h1 class="d-inline m-2 text-decoration-underline">Dashboard</h1>
+    
+    {% endif %}
+    
+    {% if u %}
+    <a href="/logout" class="li2 logout_btn btn btn-success  float-end mt-2 me-4 "><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    <!-- <li class="nav_ul"> -->
+    {% endif %}
+   
+
+    <button id="add_data" class="btn btn-success float-end mt-2 me-4 ">Add Data</button>
+
+    <!-- <div id="itemsContainer"></div> -->
+    <table id="reload_div" class="table table-striped" style="text-transform: capitalize; ">
+        <thead class="table-dark">
+            <tr id="htr">
+
+
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+
+        </tbody>
+    </table>
+    <!-- <table class="table"></table>
+</table> -->
+
+<script src="https://kit.fontawesome.com/d94b871288.js" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+        let Product = [];
+        let keys = ["Update", "Delete"];
+        fetch('http://127.0.0.1:5000/api/Products')
+            .then(res => res.json())
+            .then(data => {
+                Product = data
+                // create columns on basis of data
+                for (const key in data[0]) {
+                    // console.log(keys);
+
+                    if (key != "Image") {
+                        keys.unshift(key)
+                        //  console.log(typeof(keys));
+                    }
+                    // console.log(key); // Logs the keys: 'id', 'name', 'age', 'profession'
+                }
+                for (let x of keys) {
+
+                    let htr = document.querySelector("#htr")
+                    htr.innerHTML += ` <th scope="col">${x}</th>
+         `;
+                }
+
+                // Create rows from data
+                let tbody = document.querySelector("tbody")
+                data.forEach(item => {
+                    tbody.innerHTML += `<tr>
+            
+            
+                        <td>${item.slug}</td>
+                        <td>${item.price}</td>  
+                        <td>${item.name}</td>
+                        <td>${item.id}</td>
+                        <td>${item.description}</td>
+                        <td>${item.color}</td>
+                        <td>${item.category}</td>
+            <td><button  class="btn btn-primary">Update</button></td>
+            <td><button  class="btn btn-danger">Delete</button></td>
+            </tr>`;
+                });
+
+                // Buttons update,delete
+                let btns = document.querySelectorAll("button")
+                btns.forEach(btn => {
+                    $(document).ready(function(){
+ 
+});
+                    btn.addEventListener("click", () => {
+                        let clicked_btn = event.target;
+
+                        // console.dir(clicked_btn.textContent + " Clicked!");
+                        let res = confirm("yes/no");
+                        console.log(res);
+                        if (res) {
+                            // console.log(`Row ${clicked_btn.textContent} successfuly!`);
+                            let body = document.querySelector("body")
+                            if (clicked_btn.textContent == "Update") {
+
+                                if (confirm("You want to add new data?")) {
+                                    let model_ = document.querySelector(".model")
+                                    // $("#model").fadeToggle(3000);
+                                    // let ca = document.getElementById("ca")
+                                    model_.style.display = "flex"
+                                    document.getElementById("inp_file").style.display="none"
+                                    let model_heading_ = document.querySelector(".model_heading")
+                                    model_heading_.textContent = clicked_btn.textContent
+                                    let parent_div = clicked_btn.parentElement.parentElement;
+                                    // console.log("Parent Div:", parent_div);
+
+                                    // console.dir(parent_div)
+                                    let item_tr = parent_div.children;
+                                    Array.from(item_tr).forEach((e, ind) => {
+                                        //    console.log(e.textContent);
+                                        if (e.textContent != "Update" && e.textContent != "Delete") {
+                                            // console.log(e);
+                                            let model_inp_r = document.getElementsByClassName("model_input")
+
+                                            // console.log(model_inp[ind]);
+                                            // console.log(e.textContent);
+                                            if (ind == 3) {
+                                                const updateId = document.getElementById("updateId")
+                                                updateId.textContent = e.textContent
+                                                console.log(e);
+
+                                            }
+                                            // if (e.name == "file") {
+                                            //     e.style.display="none"
+                                                
+                                            // }
+                                            else {
+                                                if (model_inp_r[ind]) {
+                                                    // Only set the value if the element exists
+                                                    model_inp_r[ind].value = e.textContent;
+                                                    console.log(model_inp_r[ind].value);
+                                                } else {
+                                                    // If the element is not found, log an error message
+                                                    console.error(`Input element at index ${ind} does not exist.`);
+                                                }
+                                            }
+
+
+
+
+                                        }
+
+
+                                    })
+                                    // let model = document.querySelector(".model")
+                                    // let ca = document.getElementById("ca")
+                                    // model.style.display = "flex"
+                                    // let model_heading = document.querySelector(".model_heading")
+                                    // model_heading.textContent = clicked_btn.textContent
+
+                                    // let model_inputs = document.querySelectorAll(".model_input")
+                                    // // console.log(model_inputs);
+                                    // model_inputs.forEach((inp, ind) => {
+                                    //     // console.log(`${ind} = index ${inp.className} = input`);
+                                    //     let g = keys[ind];
+                                    //     let value = Product[0][g]
+                                    //     inp.value = value
+
+                                    //     //    console.log(g);
+                                    //     // console.log(value);
+
+                                    // })
+
+                                    // ======================
+                                    // let update_data = {};
+
+                                    // const model_keys = ["Image", "slug", "price", "name", "id", "description", "color", "category"]
+
+                                    // let model_inp = document.querySelectorAll("input")
+
+                                    // model_inp.forEach((inp, ind) => {
+                                    //     if (inp.type != "submit") {
+                                    //         let a = model_keys[ind]
+                                    //         if (inp.type == "file") {
+
+                                    //             const fileInput = inp
+                                    //             fileInput.style.display="none"
+                                    //             // const uploadForm = document.getElementById('uploadForm');
+                                    //             // // const fileInput = document.getElementById('fileInput');
+
+                                    //             // uploadForm.addEventListener('submit', function (e) {
+
+                                    //             //     e.preventDefault(); // Prevent form submission
+
+                                    //             //     // Create a new FormData object
+                                    //             //     const formData = new FormData();
+
+                                    //             //     console.log(formData);
+
+
+                                    //             //     // Append the selected file to the FormData object
+                                    //             //     console.log(fileInput);
+                                    //             //     console.dir(fileInput);
+
+                                    //             //     const file = fileInput.files[0];  // Get the file from the input
+                                    //             //     console.log(fileInput.files[0]);
+                                    //             //     console.log(fileInput.files[1]);
+
+                                    //             //     formData.append('file', file);
+                                    //             //     console.log(formData);
+
+
+                                    //             //     // Send the file via fetch to the server
+                                    //             //     fetch('http://127.0.0.1:5000/upload', {
+                                    //             //         method: 'POST',
+                                    //             //         body: formData,
+                                    //             //     })
+                                    //             //         .then(response => response.json())
+                                    //             //         .then(data => {
+                                    //             //             console.log('Success:', data);
+                                    //             //             document.getElementById('response').innerText = "File uploaded successfully!";
+                                    //             //         })
+                                    //             //         .catch((error) => {
+                                    //             //             console.error('Error:', error);
+                                    //             //             // document.getElementById('response').innerText = "File upload failed!";
+                                    //             //         });
+
+                                    //             // });
+                                    //             // const value = inp.value;
+                                    //             let inp_file_name = model_inp[0].files[0]["name"]
+                                    //             update_data[a] = inp_file_name;
+
+
+                                    //         }
+                                    //         else {
+                                    //             // console.log(a);
+
+                                    //             const value = inp.value;
+                                    //             update_data[a] = value;
+
+
+
+                                    //         }
+
+                                    //     }
+
+                                    // })
+                                    // console.log(update_data);
+
+                                    // fetch('http://127.0.0.1:5000/api/updateData', { // Replace with your Flask route
+                                    //     method: 'POST',
+                                    //     headers: {
+                                    //         'Content-Type': 'application/json',
+                                    //     },
+                                    //     body: JSON.stringify({ update_data }) // Fixed the trailing /
+                                    // })
+                                    //     .then(response => response.json()) // Processing the JSON response
+                                    //     .then(data => {
+                                    //         console.log('Server response:', data); // Log the server's response
+                                    //     })
+                                    //     .catch(error => {
+                                    //         console.error('Error:', error); // Log any errors
+                                    //     });
+
+
+
+
+
+                                    // // ====================
+                                    // location.reload();
+
+
+
+                                }
+
+
+
+
+                            }
+
+
+                        }
+                        if (clicked_btn.textContent == "Delete") {
+                            // console.log(clicked_btn);
+                            // confirm("csdzca")
+                            if (confirm("You want to add delete data?")) {
+                                let parent_div = clicked_btn.parentElement.parentElement;
+                                // console.log("Parent Div:", parent_div);
+
+                                // console.dir(parent_div)
+                                let item_tr = parent_div.children;
+                                // console.dir(item_tr[3]);
+                                // console.log(item_tr[3].innerText);
+                                heatId = item_tr[3].innerText;
+                                console.log(`${heatId} is deleted!`);
+                                const delData = heatId
+
+                                fetch('http://127.0.0.1:5000/api/deleteData', { // Replace with your Flask route
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ delData }) // Fixed the trailing /
+                                })
+                                    .then(response => response.json()) // Processing the JSON response
+                                    .then(data => {
+                                        console.log('Server response:', data); // Log the server's response
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error); // Log any errors
+                                    });
+                                location.reload(); // Reloads the current page
+
+
+
+                            }
+
+
+
+
+
+                        }
+                    }
+
+                    )
+
+                });
+
+                //------------------ model submit-----------------------------------
+                let model_submit_btn = document.querySelector(".model_submit_btn")
+                model_submit_btn.addEventListener("click", () => {
+                    let submit = false
+                    let model_heading = document.querySelector(".model_heading")
+                    // -----------------------------------------------------------------
+                    // ++++++++++++++++++++++++++++++++++++++add the data +++++++++++++++++++++++++++
+                    if (model_heading.textContent != "Update") {
+                        try {
+                            let add_data = {};
+
+                            const model_keys = ["Image", "slug", "price", "name", "description", "color", "category"]
+
+                            let model_inp = document.querySelectorAll("input")
+
+                            model_inp.forEach((inp, ind) => {
+                                if (inp.type != "submit") {
+                                    let a = model_keys[ind]
+                                    if (inp.type == "file") {
+
+                                        const fileInput = inp
+                                        const uploadForm = document.getElementById('uploadForm');
+                                        // const fileInput = document.getElementById('fileInput');
+
+                                        uploadForm.addEventListener('submit', function (e) {
+
+                                            e.preventDefault(); // Prevent form submission
+
+                                            // Create a new FormData object
+                                            const formData = new FormData();
+
+                                            console.log(formData);
+
+
+                                            // Append the selected file to the FormData object
+                                            console.log(fileInput);
+                                            console.dir(fileInput);
+
+                                            const file = fileInput.files[0];  // Get the file from the input
+                                            console.log(fileInput.files[0]);
+                                            console.log(fileInput.files[1]);
+
+                                            formData.append('file', file);
+                                            console.log(formData);
+
+
+                                            // Send the file via fetch to the server
+                                            fetch('http://127.0.0.1:5000/upload', {
+                                                method: 'POST',
+                                                body: formData,
+                                            })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    console.log('Success:', data);
+                                                    document.getElementById('response').innerText = "File uploaded successfully!";
+                                                })
+                                                .catch((error) => {
+                                                    console.error('Error:', error);
+                                                    // document.getElementById('response').innerText = "File upload failed!";
+                                                });
+
+                                        });
+                                        // const value = inp.value;
+                                        let inp_file_name = model_inp[0].files[0]["name"]
+                                        add_data[a] = inp_file_name;
+
+
+                                    }
+                                    else {
+                                        // console.log(a);
+
+                                        const value = inp.value;
+                                        add_data[a] = value;
+
+
+
+                                    }
+
+                                }
+
+                            })
+                            console.log(add_data);
+
+                            fetch('http://127.0.0.1:5000/api/add_data', { // Replace with your Flask route
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ add_data }) // Fixed the trailing /
+                            })
+                                .then(response => response.json()) // Processing the JSON response
+                                .then(data => {
+                                    console.log('Server response:', data); // Log the server's response
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error); // Log any errors
+                                });
+
+                            // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+                            let model = document.getElementsByClassName("model")[0]
+
+                            model.style.display = "none";
+
+
+                            submit = true
+
+                            // console.log(model_input);
+                            setTimeout(function () {
+                                console.log("This message appears after 3 seconds");
+                                location.reload(); // Reloads the current page
+                            }, 3000);  // 3000 milliseconds = 3 seconds
+
+
+                        }
+                        catch {
+                            let model = document.getElementsByClassName("model")[0]
+
+                            model.style.display = "none";
+                            console.log("error");
+
+                        }
+
+                        if (submit == true) {
+                            alert(`Row upadted successfuly!`);
+                        }
+                        else {
+                            alert(`Something wants to wrong!`);
+
+                        }
+                    }
+                    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\update submit\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+                    if (model_heading.textContent == "Update") {
+                        let update_data = {};
+
+                        // Prevent form submission
+                        const form = document.getElementById("uploadForm");
+                        form.addEventListener('submit', function (event) {
+                            event.preventDefault(); // Correct way to call preventDefault
+
+                            const model_keys = ["file", "slug", "price", "name", "id", "description", "color", "category"]
+                            let model_inp = document.querySelectorAll("input");
+
+                            model_inp.forEach((inp, ind) => {
+                                if (inp.type != "submit") {
+                                    let key = model_keys[ind];
+                                    if (inp.name == key) {
+
+                                        // Handle file input or ID input
+                                        if (inp.name == "file" || inp.name == "id") {
+                                            if (inp.type != "file") {
+                                                const updateId = document.getElementById("updateId");
+                                                const iValue = updateId.textContent;
+                                                update_data[key] = iValue;
+                                            } else {
+                                                const fileInput = inp;
+                                                // fileInput.style.display = "none";  // If this is intentional, handle accordingly
+                                                // Consider handling the file upload separately here if necessary
+                                            }
+                                        } else {
+                                            // Handle other inputs
+                                            const value = inp.value;
+                                            update_data[key] = value;
+                                            console.log(inp.value);
+                                        }
+                                    }
+                                }
+                            });
+
+                            console.log(update_data);
+
+                            // Send data to the backend
+                            fetch('http://127.0.0.1:5000/api/updateData', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ update_data })  // Send the collected data
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log('Server response:', data);  // Log the server's response
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);  // Handle errors
+                                });
+                            location.reload()
+                        });
+                    }
+                    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+                    // if (model_heading.textContent == "Update") {
+                    //     let update_data = {};
+                    //     // document.getElementById("uploadForm").preventDefault()
+                    //     const model_keys = [ "slug", "price", "name", "id", "description", "color", "category"]
+
+                    //     let model_inp = document.querySelectorAll("input")
+
+                    //     model_inp.forEach((inp, ind) => {
+                    //         if (inp.type != "submit") {
+                    //             let a = model_keys[ind]
+                    //             if (inp.type == "file" || inp.name == "id") {
+
+                    //                 if (inp.type != "file") {
+                    //                     const updateId = document.getElementById("updateId")
+                    //                     const iValue = updateId.textContent
+                    //                     update_data[a] = iValue;
+                    //                 }
+                    //                 else{
+                    //                     const fileInput = inp
+                    //                     fileInput.style.display = "none"
+
+                    //                 }
+                    //                 // const uploadForm = document.getElementById('uploadForm');
+                    //                 // // const fileInput = document.getElementById('fileInput');
+
+                    //                 // uploadForm.addEventListener('submit', function (e) {
+
+                    //                 //     e.preventDefault(); // Prevent form submission
+
+                    //                 //     // Create a new FormData object
+                    //                 //     const formData = new FormData();
+
+                    //                 //     console.log(formData);
+
+
+                    //                 //     // Append the selected file to the FormData object
+                    //                 //     console.log(fileInput);
+                    //                 //     console.dir(fileInput);
+
+                    //                 //     const file = fileInput.files[0];  // Get the file from the input
+                    //                 //     console.log(fileInput.files[0]);
+                    //                 //     console.log(fileInput.files[1]);
+
+                    //                 //     formData.append('file', file);
+                    //                 //     console.log(formData);
+
+
+                    //                 //     // Send the file via fetch to the server
+                    //                 //     fetch('http://127.0.0.1:5000/upload', {
+                    //                 //         method: 'POST',
+                    //                 //         body: formData,
+                    //                 //     })
+                    //                 //         .then(response => response.json())
+                    //                 //         .then(data => {
+                    //                 //             console.log('Success:', data);
+                    //                 //             document.getElementById('response').innerText = "File uploaded successfully!";
+                    //                 //         })
+                    //                 //         .catch((error) => {
+                    //                 //             console.error('Error:', error);
+                    //                 //             // document.getElementById('response').innerText = "File upload failed!";
+                    //                 //         });
+
+                    //                 // });
+                    //                 // const value = inp.value;
+                    //                 // let inp_file_name = model_inp[0].files[0]["name"]
+                    //                 // update_data[a] = inp_file_name;
+
+
+                    //             }
+                    //             else {
+                    //                 // console.log(a);
+
+                    //                 const value = inp.value;
+                    //                 update_data[a] = value;
+                    //                 console.log(inp.value);
+
+
+
+
+                    //             }
+
+                    //         }
+
+                    //     })
+                    //     console.log(update_data);
+
+                    //     fetch('http://127.0.0.1:5000/api/updateData', { // Replace with your Flask route
+                    //         method: 'POST',
+                    //         headers: {
+                    //             'Content-Type': 'application/json',
+                    //         },
+                    //         body: JSON.stringify({ update_data }) // Fixed the trailing /
+                    //     })
+                    //         .then(response => response.json()) // Processing the JSON response
+                    //         .then(data => {
+                    //             console.log('Server response:', data); // Log the server's response
+                    //         })
+                    //         .catch(error => {
+                    //             console.error('Error:', error); // Log any errors
+                    //         });
+
+
+
+
+
+                    //     // ====================
+                    //     // location.reload();
+
+                    // }
+                })
+                // --------------------------------------------------------------------
+                // =========================model open============================
+                let add_btn = document.getElementById("add_data")
+                add_btn.addEventListener("click", () => {
+
+                    if (add_btn.textContent == "Add Data") {
+                        if (confirm("You want to add new data?")) {
+                            let model = document.querySelector(".model")
+                            model.style.display = "flex"
+                            let model_heading = document.querySelector(".model_heading")
+                            model_heading.textContent = add_btn.textContent + " The Row"
+                            // Resets the entire form including file input
+                            document.getElementById("uploadForm").reset();
+
+                            let inputs = document.querySelectorAll("input")
+                            // inputs.forEach(inp=>{
+                            //     if(inp.type != "submit"){
+                            //         if (inp.type != "file") {
+
+                            //             inp.value = " ";
+                            //         }
+                            //         else{
+                            //             document.getElementById("inp_file").value = " ";
+                            //         }
+                            //     }
+                            // })
+
+
+
+
+
+                        }
+
+
+
+                    }
+                })
+                // ====================================================================
+            }
+            )
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+{
+    "params":
+    {
+        "local_server":"Ture",
+        "local_uri":"'mysql+pymysql://root:@localhost:3300/fashionkart?connect_timeout=10'",
+        "no_of_posts":3,
+        "upload_location" : "C:\\Users\\Dell\\Desktop\\flsak\\static"
+
+    }
+}

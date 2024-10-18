@@ -1,0 +1,160 @@
+{% extends "filter.html" %}
+{% block body %}
+
+<div class="side_bar">
+    <div class="filter">
+        <h4 class="filter_h4">FILTERS</h4>
+        <div class="filter_sort">
+            <h6 class="filter_sort_h6">SORT</h6>
+            <select name="sort" id="sort" onchange="location = this.value;">
+                <option value={{All}} class="sort_option_1">All</option>
+                <option value="{{sort_lh}}" class="sort_option_1">Low to High</option>
+                <option value="{{sort_hl}}" class="sort_option_1">High to Low</option>
+
+            </select>
+        </div>
+        <div class="filter_categories">
+            <h6 class="filter_categories_h6">CATEGORIES</h6>
+            <select name="categories" id="categories" onchange="location = this.value;">
+                <option value="All" class="categories">All</option>
+                {% for item in unique_categories %}
+                <option value="/item/category/{{item[0]}}">{{ item[0] }}</option>
+                <!-- <a href="www.google.com"><option value="{{item[0]}}" class="categories">{{item[0]}}</option></a> -->
+                {% endfor %}
+                <!-- <option value="sketcher" class="categories">sketcher</option>
+                <option value="paety" class="categories">paety</option>
+                <option value="traditional" class="categories">traditional</option>
+                <option value="running" class="categories">running</option>
+                <option value="shoes" class="categories">shoes</option> -->
+            </select>
+        </div>
+        <div class="filter_color">
+            <h6 class="filter_color_h6">COLOR</h6>
+            <select name="color" id="color" onchange="location = this.value;">
+                <option value="All" class="color_option">All</option>
+                {% for item in unique_color %}
+                <option value="/item/color/{{item[0]}}" class="color_option">{{item[0]}}</option>
+                {% endfor %}
+                <!-- <option value="black" class="color_option">Black</option>
+                <option value="red" class="color_option">Red</option>
+                <option value="white" class="color_option">White</option>
+                <option value="green" class="color_option">Green</option>
+                <option value="blue" class="color_option">Blue</option> -->
+            </select>
+        </div>
+        <!-- <div class="filter_max_price">
+            <h6 class="filter_max_price_h6">MAX_PRICE:$10000</h6>
+            <ul class="filter_max_price_ul"> -->
+        <!-- <li class="filter_max_price_ul_li1 filter_max_price_ul_li" >$0 - $2500</li>
+                <li class="filter_max_price_ul_li2 filter_max_price_ul_li" >$2500 - $5000</li>
+                <li class="filter_max_price_ul_li3 filter_max_price_ul_li" >$5000 - $7500</li>
+                <li class="filter_max_price_ul_li4 filter_max_price_ul_li" >$7500 and above</li> -->
+        <!-- </div> -->
+
+        <!-- <a href="{{prev}}" class="btn_prev"><button>&larr; PREVIOUS</button></a>
+            <a href="{{next}}" class="btn_next"><button>NEXT &rarr;</button></a> -->
+        <!-- <div class="mode_icon">
+            <span class="light_mode"><i class="fa-regular fa-sun light_i"></i></span> 
+            <span class="dark_mode"><i class="fa-regular fa-moon dark_i"></i></span> 
+        </div> -->
+        
+        <!-- {% if admin %}
+        <a href="/admin" class="adminDiv"><i class="fa-sharp fa-solid fa-circle-user" style="color: #ffffff;font-size: 1.5rem;"></i>Admin</a>
+       
+        {% endif %} -->
+    </div>
+
+
+</div>
+
+<div class="main">
+    <div class="search">
+
+        <input type="search" placeholder="Search product...." class="search_inp">
+
+        <div class="search_list"></div>
+    </div>
+    <div class="cards">
+        {% block category %}{% endblock %}
+
+        {% for item in Posts %}
+        <div class="card1 card">
+            <a href="/item/{{item.slug}}" target="_self" class="card_a">
+                {% set image_path = url_for('static', filename=item.name + '.png') %}
+
+                <img src="{{ image_path }}" alt="{{ item.name }}" class="card_img">
+                <!-- <img src="{{ url_for('static', filename='{{item.name}}.png') }}" alt="Shoes" class="card_img">      -->
+                <p class="p_name">{{item.name}}</p>
+                <p class="p_description">Description </p>
+                <p class="p_price">$ {{item.price}}</p>
+            </a>
+            <a href="/item/add_cart/{{item.slug}}" class="add_cart">Add to cart</a>
+        </div>
+        {% endfor %}
+
+    </div>
+<!-- </div>
+<a href="/add_product" class="add_product"><i class="fa-solid fa-plus"></i> ADD PRODUCTS</a>
+</div> -->
+<script>
+    let products = []
+    fetch('http://127.0.0.1:5000/data')
+        .then(res => res.json())  // Return the parsed JSON data
+        .then(data => {
+            products = data
+            console.log(data);  // Process the JSON data here
+        })
+        .catch(error => {
+            console.error('Error:', error);  // Handle any errors
+        });
+
+
+    // -----------------------search input------------------ 
+    const searchInput = document.querySelector(".search_inp");
+    searchInput.addEventListener("keyup", (event) => {
+        const searchValue = event.target.value;
+        console.log(searchValue);
+
+
+        const filteredProducts = products.filter((product) => {
+            return product.name.toLowerCase().includes(searchValue.toLowerCase());
+
+        });
+        console.log(filteredProducts);
+        renderProducts(filteredProducts);
+
+
+    })
+    // --------Render Products-------------
+    function renderProducts(data) {
+        const search_container = document.querySelector(".search_list")
+        search_container.innerHTML = " ";
+        const ul = document.createElement("ul");
+        ul.classList.add("search_list")
+        data.forEach(element => {
+            const li = document.createElement("li");
+            li.classList.add("search_li")
+            const a = document.createElement("a");
+            a.classList.add("search_a")
+
+            // Set the anchor link and the text
+            a.href = `/item/name/${element.name}`;  // Set your link here
+            li.textContent = element.name;
+
+            // Append the anchor tag inside the li
+            a.appendChild(li);
+
+            // Append the li to the ul
+            ul.appendChild(a);
+
+        });
+        search_container.appendChild(ul)
+
+
+
+    }
+
+
+</script>
+
+{% endblock %}

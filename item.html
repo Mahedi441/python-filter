@@ -1,0 +1,26 @@
+{% extends "filter.html" %}
+{% block add_product %}
+
+<div class="item_main_div">
+  {% if  item  %}
+
+              <div class="item_inner_div" >
+                {% set fname = item.name ~ '.png' %}
+                <img class="item_main_img" src="{{ url_for('static', filename=fname) }}" alt="{{ item.name }}" >
+                
+                <div class="item_main_content" >
+                    <p class="item_main_name" >{{item.name}}</p>
+                    <p class="item_main_description" >{{item.description}}</p>
+                    <p class="item_main_color" >{{item.color}}</p>
+                    <p class="item_main_category" >{{item.category}}</p>
+                    <p class="item_main_price" >${{item.price}}</p>
+                    <p class="item_main_slug" >{{item.slug}}</p>
+                </div>
+            </div>
+  {% else  %}
+                <p class="">Not Found 404!</p>
+  {% endif %}
+     
+</div>
+ 
+{% endblock %}

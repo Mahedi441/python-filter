@@ -1,0 +1,97 @@
+{% extends "filter.html" %}
+{% block body %}
+<div class="cart_page">
+    <div class="cart_cards">
+        <a href="/"><i class="fa-solid fa-xmark close_cart" ></i></a>
+        {% for x in cart_items %}
+        <div class="cart_card">
+            {% set filename='/static/' ~ x.name ~ '.png' %}
+            <img src="{{filename}}" alt="" class="cart_img">
+            <div class="cart_contain">
+                <p class="cart_contain_name">{{x.name}}</p>
+                <!-- <p class="id" style="visibility: hidden;">{{x.id}}</p> -->
+                <input type="number" class="cart_con_qty" min="0"  step="1" placeholder="Qty">
+            </div>
+            <div class="cart_price_offer">
+                <p class="cart_price">${{x.price}}</p>
+                <p class="cart_offer">-50%</p>
+                {% set discounted_price = x.price * 0.5 %}
+                <p class="cart_final_price">${{discounted_price}}</p>
+                <button class="con_remove_btn btn btn-danger" value="{{x.id}}">Remove</button>
+                <!-- <p class="cart_final_price">&2500%</p> -->
+            </div>
+
+        </div>
+        {% endfor %}
+        
+
+    </div>
+    <div class="cart_footer">
+        <h5 class="total_h5">Total : $ {{total}}</h5>
+        <button class="buy_btn">Order</button>
+    </div>
+</div>
+<script>
+    const cart_cards = document.querySelector(".cart_cards")
+    console.log(cart_cards.children);
+    
+    console.log(cart_cards.childElementCount);
+    if(cart_cards.childElementCount <= 1){
+        console.log("no item in cart");
+        let p = document.createElement("p")
+        p.innerText = "No Item Cannot found"
+        p.classList.add("cartCount")
+        cart_cards.appendChild(p)
+        
+    }
+    
+    const removeBtn = document.querySelectorAll(".con_remove_btn")
+    removeBtn.forEach(element => {
+        
+ 
+    element.addEventListener("click",()=>{
+        let clicked_btn = event.target;
+        if (confirm("You want to add delete data?")) {
+                                let parent_div = clicked_btn.parentElement.parentElement;
+                                // console.log("Parent Div:", parent_div);
+
+                                // console.dir(parent_div)
+                                let item_tr = parent_div.children[2];
+                                // console.dir(item_tr.children[3]);
+                                
+                                // let item = item_tr.children
+                                // console.dir(item[1].innerText);
+                                // console.log(item_tr[3].innerText);
+                                heatId = item_tr.children[3].value;
+                                console.log(`${heatId} is deleted!`);
+                                const delData = heatId
+                                
+                                
+                                
+
+                                fetch('http://127.0.0.1:5000/cart/deleteData', { // Replace with your Flask route
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ delData }) // Fixed the trailing /
+                                })
+                                    .then(response => response.json()) // Processing the JSON response
+                                    .then(data => {
+                                        console.log('Server response:', data); // Log the server's response
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error); // Log any errors
+                                    });
+                                setInterval(() => {
+                                    location.reload();
+                                }, 2200); // Reloads the current page
+
+
+
+                            }
+    })
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" name="file" />
+        <button type="submit">Upload File</button>
+      </form>
+      <div id="response"></div>
+      
+      <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('fileInput');
+      
+        uploadForm.addEventListener('submit', function (e) {
+          // e.preventDefault(); // Prevent form submission
+      
+          // Create a new FormData object
+          const formData = new FormData();
+          
+          console.log(formData);
+          
+      
+          // Append the selected file to the FormData object
+          console.log(fileInput);
+          console.dir(fileInput);
+          
+          const file = fileInput.files[0];  // Get the file from the input
+          console.log(fileInput.files[0]);
+          console.log(fileInput.files[1]);
+          
+          formData.append('file', file);
+          console.log(formData);
+          
+      
+          // Send the file via fetch to the server
+          fetch('http://127.0.0.1:5000/upload', {
+            method: 'POST',
+            body: formData,
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Success:', data);
+            document.getElementById('response').innerText = "File uploaded successfully!";
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            document.getElementById('response').innerText = "File upload failed!";
+          });
+        });
+      </script>
+      
+</body>
+</html>

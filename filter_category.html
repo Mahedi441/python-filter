@@ -1,0 +1,38 @@
+{% extends "main_filter.html"%}
+{% block category %}
+    {% if Posts_color %}
+        {% for item in Posts_color %}
+        {% set image_path = url_for('static', filename=item.name + '.png') %}
+            <a href="/item/{{item.slug}}" class="card1 card">
+                <img src="{{ image_path }}" alt="{{ item.name }}" class="card_img">
+                <p class="p_name">{{item.name}}</p>
+                <p class="p_description">Description </p>
+                <p class="p_price">$ {{item.price}}</p>
+                <button class="add_cart" onclick="btn">Add to cart</button>
+            </a>
+        {% endfor %}
+    {% endif %}
+    {% if Posts_name %}
+        {% for item in Posts_name %}
+        {% set image_path = url_for('static', filename=item.name + '.png') %}
+            <a href="/item/{{item.slug}}" class="card1 card">
+                <img src="{{ image_path }}" alt="{{ item.name }}" class="card_img">
+                <p class="p_name">{{item.name}}</p>
+                <p class="p_description">Description </p>
+                <p class="p_price">$ {{item.price}}</p>
+                <button class="add_cart" onclick="btn">Add to cart</button>
+            </a>
+        {% endfor %}
+    {% endif %}
+    {% for item in Posts_c %}
+    <a href="/item/{{item.slug}}" class="card1 card">
+        {% set image_path = url_for('static', filename=item.name + '.png') %}
+
+        <img src="{{ image_path }}" alt="Shoes" class="card_img">
+        <p class="p_name">{{item.name}}</p>
+        <p class="p_description">Description </p>
+        <p class="p_price">$ {{item.price}}</p> 
+        <button class="add_cart" onclick="btn">Add to cart</button>
+    </a>
+    {% endfor %}
+{% endblock %}

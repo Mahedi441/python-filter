@@ -1,0 +1,31 @@
+{% extends "filter.html" %}
+{% block add_product %}
+
+<div class="add_pro_page">
+    <a href="/home"><i class="fa-solid fa-xmark close_add_product_page" ></i></a>
+    <form class="add_card" action="/add_product" method="post" enctype="multipart/form-data">
+        <img src="https://res.cloudinary.com/dzwspepvg/image/upload/v1708055564/products/tlklunsunrn2kwodl5qx.png   " alt="" class="add_img_box">
+        <input type="file" class="add_img" name="file" required>
+        
+        <div class="input_box">
+            <label for="name">Product Name </label>
+        <input type="text" class="add_name" name="name" required>
+     
+        <label for="price">Product Price </label>
+        <input type="number" class="add_price" name="price" required>
+       
+        <label for="color">Product Color </label>
+        <input type="text" class="add_color" name="color" required>
+        
+        <label for="categories">Product Categorie </label>
+        <input type="text" class="add_categories" name="categories" required    >
+        
+        <label for="description">Product Description </label>
+        <textarea name="description" id="" class="add_description" ></textarea>
+        
+    </div>
+        <input type="submit" class="add_submit_btn" >
+    </form>
+</div>
+
+{% endblock %}
